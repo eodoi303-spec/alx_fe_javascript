@@ -357,15 +357,63 @@ function loadQuotes() {
     // No saved quotes - use default quotes
     console.log('📝 Using default quotes');
     return [
-      { text: "The only way to do great work is to love what you do.", category: "motivation" },
-      { text: "Innovation distinguishes between a leader and a follower.", category: "leadership" },
-      { text: "Life is what happens when you're busy making other plans.", category: "life" },
-      { text: "The future belongs to those who believe in the beauty of their dreams.", category: "motivation" },
-      { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", category: "success" },
-      { text: "The best time to plant a tree was 20 years ago. The second best time is now.", category: "wisdom" },
-      { text: "Your time is limited, don't waste it living someone else's life.", category: "life" },
-      { text: "The only impossible journey is the one you never begin.", category: "motivation" }
-    ];
+  { 
+    id: 1,
+    text: "The only way to do great work is to love what you do.", 
+    category: "motivation",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 2,
+    text: "Innovation distinguishes between a leader and a follower.", 
+    category: "leadership",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 3,
+    text: "Life is what happens when you're busy making other plans.", 
+    category: "life",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 4,
+    text: "The future belongs to those who believe in the beauty of their dreams.", 
+    category: "motivation",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 5,
+    text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", 
+    category: "success",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 6,
+    text: "The best time to plant a tree was 20 years ago. The second best time is now.", 
+    category: "wisdom",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 7,
+    text: "Your time is limited, don't waste it living someone else's life.", 
+    category: "life",
+    timestamp: Date.now(),
+    source: 'local'
+  },
+  { 
+    id: 8,
+    text: "The only impossible journey is the one you never begin.", 
+    category: "motivation",
+    timestamp: Date.now(),
+    source: 'local'
+  }
+];
   }
 }
 
@@ -420,6 +468,259 @@ function saveLastFilter(filter) {
  * Update last filter information display
  */
 function updateLastFilterInfo() {
+  // ========================================
+// SERVER SYNC FUNCTIONS
+// ========================================
+
+/**
+ * Fetch quotes from server
+ * This is called when user clicks "Sync Now" or by auto-sync
+ */
+
+async function fetchFromServer() {
+  try {
+    // Update UI to show we're syncing
+    updateSyncStatus('syncing', 'Fetching from server...');
+    log('Fetching quotes from server...');
+    
+    // Make API request to get data
+    const response = await fetch(CONFIG.SERVER_URL + '?_limit=10');
+    const data = await response.json();
+    
+    // Transform API data to our quote format
+    serverQuotes = data.map(item => ({
+      id: item.id,
+      text: item.title,
+      category: ['motivation', 'wisdom', 'life', 'success'][item.id % 4],
+      timestamp: Date.now() - (item.id * 1000000), // Simulate older timestamps
+      source: 'server'
+    }));
+    
+    log('Fetched ' + serverQuotes.length + ' quotes from server');
+    
+    // Merge server data with local data
+    await mergeData();
+    
+    // Update UI to show success
+    updateSyncStatus('success', 'Sync completed successfully');
+    showNotification('success', 'Sync Complete', serverQuotes.length + ' quotes fetched from server');
+    
+  } catch (error) {
+    // Handle errors
+    log('Error fetching from server: ' + error.message);
+    updateSyncStatus('error', 'Sync failed: ' + error.message);
+    showNotification('error', 'Sync Failed', 'Could not connect to server');
+  }
+}
+
+/**
+ * Merge local and server data
+ * Combines quotes from both sources, handling conflicts
+ */
+async function mergeData() {
+  /**
+ * Start automatic syncing
+ * Runs sync every SYNC_INTERVAL milliseconds
+ */
+function startAutoSync() {
+  // Don't start if already running
+  if (syncInterval) return;
+  
+  // Set up recurring sync
+  syncInterval = setInterval(() => {
+    log('Auto-sync triggered');
+    syncNow();
+  }, CONFIG.SYNC_INTERVAL);
+  
+  log('Auto-sync enabled (every ' + (CONFIG.SYNC_INTERVAL / 1000) + 's)');
+}
+
+/**
+ * Stop automatic syncing
+ */
+function stopAutoSync() {
+  if (syncInterval) {
+    clearInterval(syncInterval);
+    syncInterval = null;
+    log('Auto-sync disabled');
+  }
+}
+
+/**
+ * Toggle auto-sync on/off
+ * Called when user clicks "Auto: ON/OFF" button
+ */
+function toggleAutoSync() {
+  // Flip the setting
+  CONFIG.AUTO_SYNC_ENABLED = !CONFIG.AUTO_SYNC_ENABLED;
+  
+  // Update button text
+  document.getElementById('autoSyncText').textContent = 
+    'Auto: ' + (CONFIG.AUTO_SYNC_ENABLED ? 'ON' : 'OFF');
+  
+  if (CONFIG.AUTO_SYNC_ENABLED) {
+    // Turn on auto-sync
+    startAutoSync();
+    showNotification('success', 'Auto-Sync Enabled', 
+      'Will sync every ' + (CONFIG.SYNC_INTERVAL / 1000) + ' seconds');
+  } else {
+    // Turn off auto-sync
+    stopAutoSync();
+    showNotification('warning', 'Auto-Sync Disabled', 'Manual sync only');
+  }
+}
+/**
+ * Update the sync status bar appearance and text
+ */
+function updateSyncStatus(status, message) {
+  const statusEl = document.getElementById('syncStatus');
+  const textEl = document.getElementById('syncStatusText');
+  
+  // Change CSS class based on status
+  // 'syncing' = orange, 'success' = cyan, 'error' = red
+  statusEl.className = 'sync-status ' + status;
+  textEl.textContent = message;
+  
+  updateSyncDetails();
+}
+
+/**
+ * Show a notification popup
+ */
+function showNotification(type, title, message) {
+  const container = document.getElementById('notifications');
+  const id = 'notif-' + Date.now();
+  
+  // Icon for each notification type
+  const icons = {
+    success: '✅',
+    error: '❌',
+    warning: '⚠️'
+  };
+  
+  // Create notification element
+  const notif = document.createElement('div');
+  notif.className = 'notification ' + type;
+  notif.id = id;
+  notif.innerHTML = `
+    <div class="notification-icon">${icons[type] || 'ℹ️'}</div>
+    <div class="notification-content">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+    <div class="notification-close" onclick="closeNotification('${id}')">×</div>
+  `;
+  
+  // Add to page
+  container.appendChild(notif);
+  
+  // Auto-remove after 5 seconds
+  setTimeout(() => closeNotification(id), 5000);
+}
+
+/**
+ * Close/remove a notification
+ */
+function closeNotification(id) {
+  const notif = document.getElementById(id);
+  if (notif) {
+    notif.style.animation = 'slideIn 0.3s ease-out reverse';
+    setTimeout(() => notif.remove(), 300);
+  }
+}
+
+/**
+ * Add entry to sync log
+ */
+function log(message) {
+  const logEl = document.getElementById('syncLog');
+  const timestamp = new Date().toLocaleTimeString();
+  
+  // Create log entry
+  const entry = document.createElement('div');
+  entry.className = 'sync-log-entry';
+  entry.innerHTML = `
+    <span class="sync-log-timestamp">[${timestamp}]</span>
+    <span>${message}</span>
+  `;
+  
+  // Add to log
+  logEl.appendChild(entry);
+  
+  // Scroll to bottom
+  logEl.scrollTop = logEl.scrollHeight;
+  
+  // Also log to console
+  console.log(`[${timestamp}] ${message}`);
+}
+
+/**
+ * Sync now (manual trigger)
+ * Called when user clicks "Sync Now" button
+ */
+async function syncNow() {
+  await fetchFromServer();
+  lastSyncTime = new Date();
+  updateSyncDetails();
+}
+
+/**
+ * Update the "Last sync" timestamp display
+ */
+function updateSyncDetails() {
+  const details = document.getElementById('syncDetails');
+  if (lastSyncTime) {
+    details.textContent = 'Last sync: ' + lastSyncTime.toLocaleTimeString();
+  }
+}
+  log('Starting data merge...');
+  
+  // Create Maps for fast lookup by ID
+  const localMap = new Map(quotes.map(q => [q.id, q]));
+  const serverMap = new Map(serverQuotes.map(q => [q.id, q]));
+  
+  let merged = [];
+  let added = 0;    // Count new quotes from server
+  let updated = 0;  // Count updated quotes
+  
+  // Check each server quote
+  for (const [id, serverQuote] of serverMap) {
+    const localQuote = localMap.get(id);
+    
+    if (!localQuote) {
+      // Quote doesn't exist locally - it's new from server
+      merged.push(serverQuote);
+      added++;
+    } else if (serverQuote.timestamp > localQuote.timestamp) {
+      // Server version is newer - use server's version
+      merged.push(serverQuote);
+      updated++;
+    } else {
+      // Local version is newer or same - keep local
+      merged.push(localQuote);
+    }
+    
+    // Remove from local map (we've processed it)
+    localMap.delete(id);
+  }
+  
+  // Add any remaining local quotes that weren't on server
+  for (const [id, localQuote] of localMap) {
+    merged.push(localQuote);
+  }
+  
+  log(`Merge complete: ${added} added, ${updated} updated, 0 conflicts`);
+  
+  // Update our quotes array with merged data
+  quotes = merged;
+  saveQuotes();
+  updateUI();
+  
+  // Show notification if anything changed
+  if (added > 0 || updated > 0) {
+    showNotification('success', 'Data Merged', `${added} new, ${updated} updated`);
+  }
+}
   const filterName = currentFilter === 'all' ? 'All Categories' : 
     currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1);
   document.getElementById('lastFilterInfo').textContent = filterName;
@@ -735,9 +1036,15 @@ function showRandomQuote() {
 
 
   // Create category element
-  const quoteCategory = document.createElement('div');
-  quoteCategory.className = 'quote-category';
-  quoteCategory.textContent = `Category: ${quote.category}`;
+  // const quoteCategory = document.createElement('div');
+  // quoteCategory.className = 'quote-category';
+  // quoteCategory.textContent = `Category: ${quote.category}`;
+  // 
+  const source = quote.source === 'server' ? '☁️ Server' : '📱 Local';
+  quoteCategory.innerHTML = `
+    Category: ${quote.category} 
+    <span class="badge">${source}</span>
+  `;
 
   // Add elements to display
   display.appendChild(quoteText);
@@ -829,15 +1136,29 @@ function addQuote() {
   const category = categoryInput.value.trim().toLowerCase();
 
   // Validate inputs
+  // if (!text || !category) {
+  //   alert('Please fill in both quote text and category!');
+  //   return;
+  // }
   if (!text || !category) {
-    alert('Please fill in both quote text and category!');
+    showNotification('warning', 'Incomplete', 'Please fill in both fields');  // NEW
     return;
   }
 
+
+
   // Create new quote object
+  // const newQuote = {
+  //   text: text,
+  //   category: category
+  // };
+  // 
   const newQuote = {
+    id: Date.now(),           // NEW - unique ID
     text: text,
-    category: category
+    category: category,
+    timestamp: Date.now(),    // NEW - when created
+    source: 'local'           // NEW - created locally
   };
 
   // Add to quotes array
@@ -855,7 +1176,12 @@ populateCategories();  // Update dropdown with new category
   createCategoryFilter();
   showRandomQuote();
 
-  alert('Quote added and saved! 🎉');
+  // alert('Quote added and saved! 🎉');
+  // 
+  showNotification('success', 'Quote Added', 'New quote saved locally');
+  log('Added new quote: "' + text + '" [' + category + ']');
+
+
 }
 
 /**
@@ -897,6 +1223,13 @@ document.getElementById('clearStorage').addEventListener('click', clearAllData);
 // updateStorageInfo();
 // displayLastViewedQuote();
 // console.log('✅ Initialization complete');// Run when page loads
+// console.log('🚀 Initializing Quote Generator with Advanced Filtering');
+// populateCategories();
+// updateStats();
+// updateStorageInfo();
+// updateLastFilterInfo();
+// updateFilterInfo();
+// displayLastViewedQuote();
 console.log('🚀 Initializing Quote Generator with Advanced Filtering');
 populateCategories();
 updateStats();
@@ -905,6 +1238,19 @@ updateLastFilterInfo();
 updateFilterInfo();
 displayLastViewedQuote();
 
+// NEW: Start sync system
+if (CONFIG.AUTO_SYNC_ENABLED) {
+  startAutoSync();
+}
+
+// NEW: Do initial sync
+syncNow();
+
+document.getElementById('categoryFilter').value = currentFilter;
+
+console.log('✅ Initialization complete');
+console.log(`📊 Loaded ${quotes.length} quotes`);
+console.log(`🔖 Restored filter: ${currentFilter}`);
 // Restore last selected filter
 document.getElementById('categoryFilter').value = currentFilter;
 
