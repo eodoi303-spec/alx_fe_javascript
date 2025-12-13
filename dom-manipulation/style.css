@@ -509,3 +509,89 @@ input[type="file"] {
 
 
 
+/* ========================================
+   CATEGORY FILTER SECTION - NEW!
+   ======================================== */
+
+.filter-section {
+  background: #fff3e0;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #ff9800;
+}
+
+.filter-section h3 {
+  color: #e65100;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: #555;
+}
+
+/* Dropdown Styling */
+select {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  background: white;
+  min-width: 200px;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  outline: none;
+  border-color: #ff9800;
+}
+
+select:hover {
+  border-color: #ff9800;
+}
+
+.filter-info {
+  flex: 1;
+  text-align: right;
+  color: #666;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* Badge for quote count */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #ff9800;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-info {
+    text-align: left;
+  }
+
+  select {
+    width: 100%;
+  }
+}

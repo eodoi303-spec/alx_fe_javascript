@@ -307,10 +307,14 @@
  * Initialize quotes from localStorage or use defaults
  * This runs immediately when the script loads
  */
+
+
 let quotes = loadQuotes();
 
 // State variables
-let currentFilter = 'all';  // Which category is currently selected
+// let currentFilter = 'all'; 
+let currentFilter = loadLastFilter();
+ // Which category is currently selected
 let formVisible = false;    // Is the add quote form showing?
 
 // ========================================
@@ -368,6 +372,101 @@ function updateStorageInfo() {
   // Update the display
   document.getElementById('sessionInfo').textContent = 
     `Stored ${quotes.length} quotes (${sizeKB} KB in localStorage)`;
+}
+
+// ========================================
+// FILTER PERSISTENCE FUNCTIONS - NEW!
+// ========================================
+
+/**
+ * Load last selected filter from localStorage
+ */
+function loadLastFilter() {
+  const saved = localStorage.getItem('lastFilter');
+  console.log('🔖 Loading last filter:', saved || 'all');
+  return saved || 'all';
+}
+
+/**
+ * Save current filter to localStorage
+ */
+function saveLastFilter(filter) {
+  localStorage.setItem('lastFilter', filter);
+  console.log('💾 Saved filter:', filter);
+  updateLastFilterInfo();
+}
+
+/**
+ * Update last filter information display
+ */
+function updateLastFilterInfo() {
+  const filterName = currentFilter === 'all' ? 'All Categories' : 
+    currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1);
+  document.getElementById('lastFilterInfo').textContent = filterName;
+}
+
+// ========================================
+// CATEGORY MANAGEMENT - NEW!
+// ========================================
+
+/**
+ * Populate the category dropdown with unique categories
+ */
+function populateCategories() {
+  console.log('🏷️ Populating categories...');
+  
+  const select = document.getElementById('categoryFilter');
+  const currentValue = select.value;
+  
+  // Clear and add "All" option
+  select.innerHTML = '<option value="all">All Categories</option>';
+  
+  // Extract unique categories
+  const categories = new Set(quotes.map(q => q.category.toLowerCase()));
+  const sortedCategories = Array.from(categories).sort();
+  
+  // Add each category as an option
+  sortedCategories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    select.appendChild(option);
+  });
+  
+  // Restore selection
+  select.value = currentValue || currentFilter;
+  
+  console.log(`✅ Populated ${sortedCategories.length} categories`);
+}
+
+/**
+ * Filter quotes based on selected category
+ */
+function filterQuotes() {
+  const select = document.getElementById('categoryFilter');
+  currentFilter = select.value;
+  
+  console.log(`🔍 Filtering by: ${currentFilter}`);
+  
+  saveLastFilter(currentFilter);
+  updateFilterInfo();
+  updateStats();
+  showRandomQuote();
+}
+
+/**
+ * Update filter information display
+ */
+function updateFilterInfo() {
+  const filtered = getFilteredQuotes();
+  const info = document.getElementById('filterInfo');
+  
+  if (currentFilter === 'all') {
+    info.textContent = `Showing all ${filtered.length} quotes`;
+  } else {
+    const catName = currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1);
+    info.textContent = `Showing ${filtered.length} ${catName} quotes`;
+  }
 }
 
 // ========================================
@@ -487,11 +586,15 @@ function importFromJsonFile(event) {
       });
       
       // Step 4: Save to localStorage
-      saveQuotes();
+      // saveQuotes();
       
       // Step 5: Update UI
-      createCategoryFilter();
-      updateStats();
+      // createCategoryFilter();
+      // updateStats();
+      saveQuotes();
+  populateCategories();  // Update dropdown
+  updateStats();
+  updateFilterInfo();
       
       // Show success message
       alert(`✅ Successfully imported ${validQuotes} quotes!`);
@@ -526,8 +629,13 @@ function clearAllData() {
     
     // Update UI
     currentFilter = 'all';
-    createCategoryFilter();
-    updateStats();
+    // createCategoryFilter();
+    // updateStats();
+
+    populateCategories();
+  updateStats();
+  updateFilterInfo();
+  document.getElementById('categoryFilter').value = 'all';
     updateStorageInfo();
     displayLastViewedQuote();
     
@@ -556,12 +664,19 @@ function getCategories() {
  * Get quotes filtered by current category
  * Returns all quotes if 'all' is selected, otherwise filters by category
  */
+// function getFilteredQuotes() {
+  // if (currentFilter === 'all') {
+  //   return quotes;
+  // }
+  // return quotes.filter(q => q.category === currentFilter);
 function getFilteredQuotes() {
   if (currentFilter === 'all') {
     return quotes;
   }
-  return quotes.filter(q => q.category === currentFilter);
+  return quotes.filter(q => q.category.toLowerCase() === currentFilter);
 }
+
+
 
 // ========================================
 // DISPLAY FUNCTIONS
@@ -592,9 +707,12 @@ function showRandomQuote() {
   display.innerHTML = '';
 
   // Create quote text element
-  const quoteText = document.createElement('div');
-  quoteText.className = 'quote-text';
-  quoteText.textContent = `"${quote.text}"`;
+  // const quoteText = document.createElement('div');
+  // quoteText.className = 'quote-text';
+  // quoteText.textContent = `"${quote.text}"`;const quoteCategory = document.createElement('div');
+  quoteCategory.className = 'quote-category';
+  quoteCategory.innerHTML = `Category: ${quote.category} <span class="badge">${randomIndex + 1} of ${filteredQuotes.length}</span>`;
+
 
   // Create category element
   const quoteCategory = document.createElement('div');
@@ -615,35 +733,7 @@ function showRandomQuote() {
 /**
  * Create category filter buttons dynamically
  */
-function createCategoryFilter() {
-  const filterContainer = document.getElementById('categoryFilter');
-  filterContainer.innerHTML = '';
 
-  const categories = getCategories();
-  
-  // Create a button for each category
-  categories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className = 'category-btn';
-    
-    // Capitalize first letter
-    btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-    
-    // Mark active button
-    if (cat === currentFilter) {
-      btn.classList.add('active');
-    }
-
-    // Add click event
-    btn.onclick = () => {
-      currentFilter = cat;
-      createCategoryFilter();
-      showRandomQuote();
-    };
-
-    filterContainer.appendChild(btn);
-  });
-}
 
 /**
  * Toggle the add quote form visibility
@@ -736,6 +826,7 @@ function addQuote() {
   // Save to localStorage (IMPORTANT!)
   saveQuotes();
 
+populateCategories();  // Update dropdown with new category
   // Clear inputs
   textInput.value = '';
   categoryInput.value = '';
@@ -780,11 +871,26 @@ document.getElementById('clearStorage').addEventListener('click', clearAllData);
 // ========================================
 
 // Run when page loads
-console.log('🚀 Initializing Quote Generator with Storage');
-createCategoryFilter();
+// console.log('🚀 Initializing Quote Generator with Storage');
+// createCategoryFilter();
+// updateStats();
+// updateStorageInfo();
+// displayLastViewedQuote();
+// console.log('✅ Initialization complete');// Run when page loads
+console.log('🚀 Initializing Quote Generator with Advanced Filtering');
+populateCategories();
 updateStats();
 updateStorageInfo();
+updateLastFilterInfo();
+updateFilterInfo();
 displayLastViewedQuote();
+
+// Restore last selected filter
+document.getElementById('categoryFilter').value = currentFilter;
+
 console.log('✅ Initialization complete');
+console.log(`📊 Loaded ${quotes.length} quotes in ${new Set(quotes.map(q => q.category)).size} categories`);
+console.log(`🔖 Restored filter: ${currentFilter}`);
+
 
 
