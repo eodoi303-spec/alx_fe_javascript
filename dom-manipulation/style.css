@@ -595,3 +595,171 @@ select:hover {
     width: 100%;
   }
 }
+
+
+/* ========================================
+   SYNC STATUS BAR - NEW
+   ======================================== */
+
+.sync-status {
+  background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+.sync-status.syncing {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  animation: pulse 1.5s infinite;
+}
+
+.sync-status.error {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.sync-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sync-icon {
+  font-size: 1.5em;
+  animation: rotate 2s linear infinite;
+}
+
+.sync-status:not(.syncing) .sync-icon {
+  animation: none;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sync-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.sync-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.sync-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   NOTIFICATIONS - NEW
+   ======================================== */
+
+.notifications {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 350px;
+}
+
+.notification {
+  background: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideIn 0.3s ease-out;
+  border-left: 4px solid #4caf50;
+}
+
+.notification.error {
+  border-left-color: #f44336;
+}
+
+.notification.warning {
+  border-left-color: #ff9800;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-icon {
+  font-size: 1.5em;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.notification-message {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.notification-close {
+  cursor: pointer;
+  color: #999;
+  font-size: 1.2em;
+  padding: 0 5px;
+}
+
+/* ========================================
+   SYNC LOG - NEW
+   ======================================== */
+
+.sync-log {
+  background: #263238;
+  color: #aed581;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.sync-log-entry {
+  margin-bottom: 5px;
+  padding: 3px 0;
+}
+
+.sync-log-timestamp {
+  color: #78909c;
+  margin-right: 10px;
+}

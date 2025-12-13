@@ -1,4 +1,24 @@
 // ========================================
+// SYNC CONFIGURATION - NEW
+// ========================================
+
+const CONFIG = {
+  SYNC_INTERVAL: 30000, // 30 seconds
+  SERVER_URL: 'https://jsonplaceholder.typicode.com/posts',
+  AUTO_SYNC_ENABLED: true,
+  CONFLICT_STRATEGY: 'server-wins'
+};
+
+
+
+// =// ========================================
+// SYNC STATE VARIABLES - NEW
+// ========================================
+
+let serverQuotes = [];
+let syncInterval = null;
+let lastSyncTime = null;
+//=======================================
 // DATA STORAGE
 // ========================================
 
@@ -24,9 +44,9 @@
 // ========================================
 
 /**
- * Get all unique categories from quotes
- * Returns array starting with 'all' followed by unique categories
- */
+ // Get all unique categories from quotes
+ // Returns array starting with 'all' followed by unique categories
+ //
 // function getCategories() {
   // Get all categories from quotes array
   // const categoryArray = quotes.map(q => q.category);

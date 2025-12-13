@@ -52,7 +52,28 @@
 <body>
   <div class="container">
     <h1>✨ Quote Generator with Storage</h1>
+      <!-- hi -->
+  <!-- NEW: Sync Status Bar -->
+<div class="sync-status" id="syncStatus">
+  <div class="sync-info">
+    <span class="sync-icon">🔄</span>
+    <div>
+      <div id="syncStatusText">Connected to server</div>
+      <div style="font-size: 0.85em; opacity: 0.9;" id="syncDetails">
+        Last sync: Never
+      </div>
+    </div>
+  </div>
+  <div class="sync-controls">
+    <button class="sync-btn" onclick="syncNow()">Sync Now</button>
+    <button class="sync-btn" onclick="toggleAutoSync()">
+      <span id="autoSyncText">Auto: ON</span>
+    </button>
+  </div>
+</div>
 
+<!-- NEW: Notifications Container -->
+<div class="notifications" id="notifications"></div>  
     <!-- Storage Information Display -->
     <div class="storage-info">
       <h3>💾 Data Persistence</h3>
@@ -86,6 +107,15 @@
     <div class="controls">
       <button id="newQuote">Show New Quote</button>
       <button id="toggleForm">Add New Quote</button>
+      <button onclick="fetchFromServer()">Fetch from Server</button>
+      <!-- NEW: Sync Log -->
+<div class="sync-log" id="syncLog">
+  <div class="sync-log-entry">
+    <span class="sync-log-timestamp">System</span>
+    <span>Sync system initialized. Waiting for first sync...</span>
+  </div>
+</div>
+      
     </div>
 
     <!-- Form Container (Form added by JavaScript) -->
