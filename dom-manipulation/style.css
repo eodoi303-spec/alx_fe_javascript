@@ -1,31 +1,227 @@
 /* Reset default browser styles */ 
-* { margin: 0;
+/* * { margin: 0;
      padding: 0;
       box-sizing: border-box; 
-    } 
+    }  */
     
     /* Body styling - full page background */ 
     
-    body {
+    /* body {
  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #95a1d4 0%, #0f021b 100%); min-height: 100vh;
  padding: 20px; 
  display: flex;
   justify-content: center;
    align-items: center;
  }
- 
+  */
  /* Main container - white box in center */
  
- .container {
+ /* .container {
 background: white;
  border-radius: 20px;
   padding: 40px;
   max-width: 800px;
   width: 100%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
+} */
 
 /* Page title */
+/* h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+} */
+
+/* Quote display box */
+/* #quoteDisplay {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+} */
+
+/* The actual quote text */
+/* .quote-text {
+  font-size: 1.5em;
+  font-style: italic;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  line-height: 1.6;
+} */
+
+/* Category label under quote */
+/* .quote-category {
+  font-size: 0.9em;
+  color: #667eea;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+} */
+
+/* Empty state message */
+/* .empty-state {
+  text-align: center;
+  color: #95a5a6;
+  font-style: italic;
+} */
+
+/* Button container */
+/* .controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+} */
+
+/* All buttons */
+/* button {
+  background: linear-gradient(135deg, #667eea 0%, #694f83 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+} */
+
+/* Button hover effect */
+/* button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+} */
+
+/* Button click effect */
+/* button:active {
+  transform: translateY(0);
+} */
+
+/* Category filter button container */
+/* .category-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+} */
+
+/* Category filter buttons */
+/* .category-btn {
+  background: #ecf0f1;
+  color: #2c3e50;
+  padding: 8px 16px;
+  font-size: 0.9em;
+} */
+
+/* Active category button */
+/* .category-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+} */
+
+/* Add quote form */
+/* .add-quote-form {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 30px;
+  border: 2px dashed #667eea;
+} */
+
+/* Form title */
+/* .form-title {
+  font-size: 1.3em;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+} */
+
+/* Form group (wraps each input) */
+/* .form-group {
+  margin-bottom: 15px;
+} */
+
+/* Text inputs */
+/* input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border-color 0.3s;
+} */
+
+/* Input focus state */
+/* input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
+} */
+
+/* Statistics box */
+/* .stats {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  color: #555;
+} */
+
+/* Fade in animation */
+/* .fade-in {
+  animation: fadeIn 0.5s ease-in;
+} */
+
+/* Keyframes for fade animation */
+/* @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} */
+
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+
+.container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
 h1 {
   text-align: center;
   color: #333;
@@ -33,7 +229,46 @@ h1 {
   font-size: 2.5em;
 }
 
-/* Quote display box */
+/* ========================================
+   STORAGE INFO BOXES
+   ======================================== */
+
+/* Local Storage Info Box */
+.storage-info {
+  background: #e8f5e9;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid #4caf50;
+}
+
+.storage-info h3 {
+  color: #2e7d32;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.storage-info p {
+  color: #555;
+  margin: 5px 0;
+  font-size: 0.95em;
+}
+
+/* Session Storage Info Box */
+.session-info {
+  background: #e3f2fd;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid #2196f3;
+  font-size: 0.9em;
+  color: #1565c0;
+}
+
+/* ========================================
+   QUOTE DISPLAY
+   ======================================== */
+
 #quoteDisplay {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 30px;
@@ -46,7 +281,6 @@ h1 {
   transition: all 0.3s ease;
 }
 
-/* The actual quote text */
 .quote-text {
   font-size: 1.5em;
   font-style: italic;
@@ -55,7 +289,6 @@ h1 {
   line-height: 1.6;
 }
 
-/* Category label under quote */
 .quote-category {
   font-size: 0.9em;
   color: #667eea;
@@ -64,24 +297,18 @@ h1 {
   letter-spacing: 1px;
 }
 
-/* Empty state message */
 .empty-state {
   text-align: center;
   color: #95a5a6;
   font-style: italic;
 }
 
-/* Button container */
-.controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-}
+/* ========================================
+   BUTTONS
+   ======================================== */
 
-/* All buttons */
 button {
-  background: linear-gradient(135deg, #667eea 0%, #694f83 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -92,18 +319,44 @@ button {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Button hover effect */
 button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-/* Button click effect */
 button:active {
   transform: translateY(0);
 }
 
-/* Category filter button container */
+/* Control Buttons Container */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* Button Group (for import/export section) */
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Secondary Button (Orange) */
+.secondary-btn {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+/* Danger Button (Red) */
+.danger-btn {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+/* ========================================
+   CATEGORY FILTER
+   ======================================== */
+
 .category-filter {
   display: flex;
   gap: 8px;
@@ -111,7 +364,6 @@ button:active {
   flex-wrap: wrap;
 }
 
-/* Category filter buttons */
 .category-btn {
   background: #ecf0f1;
   color: #2c3e50;
@@ -119,13 +371,15 @@ button:active {
   font-size: 0.9em;
 }
 
-/* Active category button */
 .category-btn.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-/* Add quote form */
+/* ========================================
+   ADD QUOTE FORM
+   ======================================== */
+
 .add-quote-form {
   background: #f8f9fa;
   padding: 25px;
@@ -134,7 +388,6 @@ button:active {
   border: 2px dashed #667eea;
 }
 
-/* Form title */
 .form-title {
   font-size: 1.3em;
   color: #333;
@@ -142,12 +395,11 @@ button:active {
   font-weight: 600;
 }
 
-/* Form group (wraps each input) */
 .form-group {
   margin-bottom: 15px;
 }
 
-/* Text inputs */
+/* Text Input Fields */
 input[type="text"] {
   width: 100%;
   padding: 12px;
@@ -157,13 +409,42 @@ input[type="text"] {
   transition: border-color 0.3s;
 }
 
-/* Input focus state */
 input[type="text"]:focus {
   outline: none;
   border-color: #667eea;
 }
 
-/* Statistics box */
+/* File Input */
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+/* ========================================
+   IMPORT/EXPORT SECTION
+   ======================================== */
+
+.import-export-section {
+  background: #fff3e0;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  border-left: 4px solid #ff9800;
+}
+
+.import-export-section h3 {
+  color: #e65100;
+  margin-bottom: 15px;
+}
+
+/* ========================================
+   STATISTICS DISPLAY
+   ======================================== */
+
 .stats {
   text-align: center;
   margin-top: 20px;
@@ -173,12 +454,14 @@ input[type="text"]:focus {
   color: #555;
 }
 
-/* Fade in animation */
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
 
-/* Keyframes for fade animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -189,3 +472,40 @@ input[type="text"]:focus {
     transform: translateY(0);
   }
 }
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  .quote-text {
+    font-size: 1.2em;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+
+  .controls,
+  .button-group {
+    flex-direction: column;
+  }
+
+  .controls button,
+  .button-group button {
+    width: 100%;
+  }
+}
+
+
+
+
