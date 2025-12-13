@@ -1,0 +1,191 @@
+/* Reset default browser styles */ 
+* { margin: 0;
+     padding: 0;
+      box-sizing: border-box; 
+    } 
+    
+    /* Body styling - full page background */ 
+    
+    body {
+ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #95a1d4 0%, #0f021b 100%); min-height: 100vh;
+ padding: 20px; 
+ display: flex;
+  justify-content: center;
+   align-items: center;
+ }
+ 
+ /* Main container - white box in center */
+ 
+ .container {
+background: white;
+ border-radius: 20px;
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Page title */
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+}
+
+/* Quote display box */
+#quoteDisplay {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* The actual quote text */
+.quote-text {
+  font-size: 1.5em;
+  font-style: italic;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+/* Category label under quote */
+.quote-category {
+  font-size: 0.9em;
+  color: #667eea;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Empty state message */
+.empty-state {
+  text-align: center;
+  color: #95a5a6;
+  font-style: italic;
+}
+
+/* Button container */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+/* All buttons */
+button {
+  background: linear-gradient(135deg, #667eea 0%, #694f83 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Button hover effect */
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Button click effect */
+button:active {
+  transform: translateY(0);
+}
+
+/* Category filter button container */
+.category-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* Category filter buttons */
+.category-btn {
+  background: #ecf0f1;
+  color: #2c3e50;
+  padding: 8px 16px;
+  font-size: 0.9em;
+}
+
+/* Active category button */
+.category-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* Add quote form */
+.add-quote-form {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 30px;
+  border: 2px dashed #667eea;
+}
+
+/* Form title */
+.form-title {
+  font-size: 1.3em;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Form group (wraps each input) */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Text inputs */
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border-color 0.3s;
+}
+
+/* Input focus state */
+input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Statistics box */
+.stats {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  color: #555;
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Keyframes for fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

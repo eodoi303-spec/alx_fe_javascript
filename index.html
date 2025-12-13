@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Main container that holds everything -->
+  <div class="container">
+    
+    <!-- Page title -->
+    <h1>✨ Dynamic Quote Generator</h1>
+    
+    <!-- Category filter buttons will be inserted here by JavaScript -->
+    <div class="category-filter" id="categoryFilter"></div>
+    
+    <!-- Quote display area - quotes will appear here -->
+    <div id="quoteDisplay">
+      <div class="empty-state">Click "Show New Quote" to display a random quote</div>
+    </div>
+    
+    <!-- Control buttons -->
+    <div class="controls">
+      <button id="newQuote">Show New Quote</button>
+      <button id="toggleForm">Add New Quote</button>
+      <button id="clearQuotes">Clear All Quotes</button>
+    </div>
+
+    <!-- Form container - form will be inserted here by JavaScript -->
+    <div id="formContainer"></div>
+
+    <!-- Statistics display -->
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <!-- Link to JavaScript file -->
+  <script src="script.js"></script>
+</body>
+</html>
