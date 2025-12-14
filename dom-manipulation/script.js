@@ -477,7 +477,7 @@ function updateLastFilterInfo() {
  * This is called when user clicks "Sync Now" or by auto-sync
  */
 
-async function fetchFromServer() {
+async function fetchQuotesFromServer() {
   try {
     // pastehere
 
@@ -491,7 +491,7 @@ async function fetchFromServer() {
 /**
  * Fetch quotes from server
  */
-async function fetchFromServer() {
+async function fetchQuotesFromServer() {
   try {
     updateSyncStatus('syncing', 'Fetching from server...');
     log('Fetching quotes from server...');
