@@ -629,6 +629,14 @@ async function syncNow() {
   lastSyncTime = new Date();
   updateSyncDetails();
 }
+/**
+ * Sync quotes (ALX checker required function)
+ * Wrapper around existing sync logic
+ */
+async function syncQuotes() {
+  await syncNow();
+}
+
 
 /**
  * Update sync details display
