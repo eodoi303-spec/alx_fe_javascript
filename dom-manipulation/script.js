@@ -524,8 +524,24 @@ async function fetchQuotesFromServer() {
     
     await mergeData();
     
-    updateSyncStatus('success', 'Sync completed successfully');
-    showNotification('success', 'Sync Complete', serverQuotes.length + ' quotes fetched from server');
+//     updateSyncStatus('success', 'Sync completed successfully');
+//     showNotification('success', 'Sync Complete', serverQuotes.length + ' quotes fetched from server');
+    
+//     updateSyncStatus('success', 'Sync completed successfully');
+// showNotification('success', 'Sync Complete', serverQuotes.length + ' quotes fetched from server');
+// 
+updateSyncStatus('success', 'Sync completed successfully');
+
+showNotification(
+  'success',
+  'Quotes synced with server!',
+  `${serverQuotes.length} quotes fetched from server`
+);
+
+
+showNotification('success', 'Quotes synced', 'Quotes synced with server!');
+
+
     
   } catch (error) {
     log('Error fetching from server: ' + error.message);
