@@ -479,10 +479,225 @@ function updateLastFilterInfo() {
 
 async function fetchFromServer() {
   try {
+    // pastehere
+
     // Update UI to show we're syncing
     updateSyncStatus('syncing', 'Fetching from server...');
     log('Fetching quotes from server...');
+    // ========================================
+// SERVER SYNC FUNCTIONS
+// ========================================
+
+/**
+ * Fetch quotes from server
+ */
+async function fetchFromServer() {
+  try {
+    updateSyncStatus('syncing', 'Fetching from server...');
+    log('Fetching quotes from server...');
     
+    const response = await fetch(CONFIG.SERVER_URL + '?_limit=10');
+    const data = await response.json();
+    
+    serverQuotes = data.map(item => ({
+      id: item.id,
+      text: item.title,
+      category: ['motivation', 'wisdom', 'life', 'success'][item.id % 4],
+      timestamp: Date.now() - (item.id * 1000000),
+      source: 'server'
+    }));
+    
+    log('Fetched ' + serverQuotes.length + ' quotes from server');
+    
+    await mergeData();
+    
+    updateSyncStatus('success', 'Sync completed successfully');
+    showNotification('success', 'Sync Complete', serverQuotes.length + ' quotes fetched from server');
+    
+  } catch (error) {
+    log('Error fetching from server: ' + error.message);
+    updateSyncStatus('error', 'Sync failed: ' + error.message);
+    showNotification('error', 'Sync Failed', 'Could not connect to server');
+  }
+}
+
+/**
+ * Merge local and server data
+ */
+async function mergeData() {
+  log('Starting data merge...');
+  
+  const localMap = new Map(quotes.map(q => [q.id, q]));
+  const serverMap = new Map(serverQuotes.map(q => [q.id, q]));
+  
+  let merged = [];
+  let added = 0;
+  let updated = 0;
+  
+  for (const [id, serverQuote] of serverMap) {
+    const localQuote = localMap.get(id);
+    
+    if (!localQuote) {
+      merged.push(serverQuote);
+      added++;
+    } else if (serverQuote.timestamp > localQuote.timestamp) {
+      merged.push(serverQuote);
+      updated++;
+    } else {
+      merged.push(localQuote);
+    }
+    
+    localMap.delete(id);
+  }
+  
+  for (const [id, localQuote] of localMap) {
+    merged.push(localQuote);
+  }
+  
+  log(`Merge complete: ${added} added, ${updated} updated`);
+  
+  quotes = merged;
+  saveQuotes();
+  updateUI();
+  
+  if (added > 0 || updated > 0) {
+    showNotification('success', 'Data Merged', `${added} new, ${updated} updated`);
+  }
+}
+
+/**
+ * Start automatic syncing
+ */
+function startAutoSync() {
+  if (syncInterval) return;
+  
+  syncInterval = setInterval(() => {
+    log('Auto-sync triggered');
+    syncNow();
+  }, CONFIG.SYNC_INTERVAL);
+  
+  log('Auto-sync enabled (every ' + (CONFIG.SYNC_INTERVAL / 1000) + 's)');
+}
+
+/**
+ * Stop automatic syncing
+ */
+function stopAutoSync() {
+  if (syncInterval) {
+    clearInterval(syncInterval);
+    syncInterval = null;
+    log('Auto-sync disabled');
+  }
+}
+
+/**
+ * Toggle auto-sync on/off
+ */
+function toggleAutoSync() {
+  CONFIG.AUTO_SYNC_ENABLED = !CONFIG.AUTO_SYNC_ENABLED;
+  document.getElementById('autoSyncText').textContent = 
+    'Auto: ' + (CONFIG.AUTO_SYNC_ENABLED ? 'ON' : 'OFF');
+  
+  if (CONFIG.AUTO_SYNC_ENABLED) {
+    startAutoSync();
+    showNotification('success', 'Auto-Sync Enabled', 
+      'Will sync every ' + (CONFIG.SYNC_INTERVAL / 1000) + ' seconds');
+  } else {
+    stopAutoSync();
+    showNotification('warning', 'Auto-Sync Disabled', 'Manual sync only');
+  }
+}
+
+/**
+ * Sync now (manual trigger)
+ */
+async function syncNow() {
+  await fetchFromServer();
+  lastSyncTime = new Date();
+  updateSyncDetails();
+}
+
+/**
+ * Update sync details display
+ */
+function updateSyncDetails() {
+  const details = document.getElementById('syncDetails');
+  if (lastSyncTime) {
+    details.textContent = 'Last sync: ' + lastSyncTime.toLocaleTimeString();
+  }
+}
+
+/**
+ * Update sync status bar
+ */
+function updateSyncStatus(status, message) {
+  const statusEl = document.getElementById('syncStatus');
+  const textEl = document.getElementById('syncStatusText');
+  
+  statusEl.className = 'sync-status ' + status;
+  textEl.textContent = message;
+  
+  updateSyncDetails();
+}
+
+/**
+ * Show notification popup
+ */
+function showNotification(type, title, message) {
+  const container = document.getElementById('notifications');
+  const id = 'notif-' + Date.now();
+  
+  const icons = {
+    success: '✅',
+    error: '❌',
+    warning: '⚠️'
+  };
+  
+  const notif = document.createElement('div');
+  notif.className = 'notification ' + type;
+  notif.id = id;
+  notif.innerHTML = `
+    <div class="notification-icon">${icons[type] || 'ℹ️'}</div>
+    <div class="notification-content">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+    <div class="notification-close" onclick="closeNotification('${id}')">×</div>
+  `;
+  
+  container.appendChild(notif);
+  
+  setTimeout(() => closeNotification(id), 5000);
+}
+
+/**
+ * Close notification
+ */
+function closeNotification(id) {
+  const notif = document.getElementById(id);
+  if (notif) {
+    notif.style.animation = 'slideIn 0.3s ease-out reverse';
+    setTimeout(() => notif.remove(), 300);
+  }
+}
+
+/**
+ * Log to sync log
+ */
+function log(message) {
+  const logEl = document.getElementById('syncLog');
+  const timestamp = new Date().toLocaleTimeString();
+  const entry = document.createElement('div');
+  entry.className = 'sync-log-entry';
+  entry.innerHTML = `
+    <span class="sync-log-timestamp">[${timestamp}]</span>
+    <span>${message}</span>
+  `;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+  
+  console.log(`[${timestamp}] ${message}`);
+}
     // Make API request to get data
     const response = await fetch(CONFIG.SERVER_URL + '?_limit=10');
     const data = await response.json();
